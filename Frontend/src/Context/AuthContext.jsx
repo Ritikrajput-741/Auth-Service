@@ -4,7 +4,7 @@ export const authContext = createContext();
 
 const AuthContext = ({ children }) => {
   // Server http
-  const serverUrl = "http://localhost:5001";
+  const serverUrl = "https://auth-service-3-qevr.onrender.com";
   const [userFullData, setUserFullData] = useState("");
   let value = {
     serverUrl,
