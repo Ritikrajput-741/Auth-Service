@@ -11,7 +11,7 @@ export const verifyEmail = async (token, email) => {
 
   console.log(process.env.USER_EMAIL);
   console.log(process.env.USER_PASS);
-  const verificationLink = `http://localhost:5173/verify/${token}`;
+  const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
   console.log("verificationLink,", verificationLink);
 
   const mailOptions = {
