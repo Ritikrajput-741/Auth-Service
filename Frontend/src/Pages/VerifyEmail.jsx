@@ -24,7 +24,7 @@ const VerifyEmail = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         if (res.data.success) {
@@ -59,7 +59,6 @@ const VerifyEmail = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-5">
       <div className="w-full max-w-lg rounded-3xl border border-gray-700 bg-gray-900 shadow-lg p-10 text-center">
-
         <div className="flex justify-center mb-6">
           <div
             className={`h-20 w-20 rounded-full flex items-center justify-center text-4xl border
@@ -73,9 +72,7 @@ const VerifyEmail = () => {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">
-          {status}
-        </h1>
+        <h1 className="text-4xl font-bold text-white mb-4">{status}</h1>
 
         <p className="text-gray-400 text-lg leading-8">
           {success

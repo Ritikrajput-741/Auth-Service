@@ -1,8 +1,10 @@
 import nodemailer from "nodemailer";
 
 export const verifyEmail = async (token, email) => {
-  console.log("email from nodemauiler", email);
-  console.log("email from nodemauiler", token);
+  if (!process.env.USER_EMAIL || !process.env.USER_PASS) {
+    throw new Error("Email credentials are missing");
+  }
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -11,11 +13,9 @@ export const verifyEmail = async (token, email) => {
     },
   });
 
-  console.log(process.env.USER_EMAIL);
-  console.log(process.env.USER_PASS);
-  const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
-  // const verificationLink = `http://localhost:5173/verify/${token}`;
-  console.log("verificationLink,", verificationLink);
+  const frontendUrl =
+    process.env.FRONTEND_URL || "https://auth-service-rose.vercel.app";
+  const verificationLink = `${frontendUrl}/verify/${token}`;
 
   const mailOptions = {
     from: process.env.USER_EMAIL,
@@ -44,11 +44,6 @@ export const verifyEmail = async (token, email) => {
     `,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
+  const info = await transporter.sendMail(mailOptions);
+  console.log("Verification email sent:", info.response);
 };

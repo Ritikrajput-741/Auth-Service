@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 
 export const sendOtpMail = async (email, otp) => {
+  if (!process.env.USER_EMAIL || !process.env.USER_PASS) {
+    throw new Error("Email credentials are missing");
+  }
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -70,11 +74,6 @@ export const sendOtpMail = async (email, otp) => {
     `,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
+  const info = await transporter.sendMail(mailOptions);
+  console.log("OTP email sent:", info.response);
 };
