@@ -1,79 +1,72 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpMail = async (email, otp) => {
-  if (!process.env.USER_EMAIL || !process.env.USER_PASS) {
-    throw new Error("Email credentials are missing");
-  }
+  try {
+    const response = await resend.emails.send({
+      from: "Auth Service <onboarding@resend.dev>",
+      to: email,
+      subject: "Your OTP Code",
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.USER_EMAIL,
-      pass: process.env.USER_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.USER_EMAIL,
-    to: email,
-    subject: "Your OTP Code",
-
-    html: `
-      <div style="
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        padding: 30px;
-      ">
+      html: `
         <div style="
-          max-width: 500px;
-          margin: auto;
-          background: white;
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
           padding: 30px;
-          border-radius: 10px;
-          text-align: center;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         ">
-          
-          <h2 style="color: #333;">
-            Email Verification
-          </h2>
-
-          <p style="
-            color: #555;
-            font-size: 16px;
-          ">
-            Use the OTP below to verify your email address.
-          </p>
-
           <div style="
-            margin: 25px 0;
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           ">
-            <span style="
-              display: inline-block;
-              background: black;
-              color: white;
-              padding: 15px 30px;
-              font-size: 28px;
-              letter-spacing: 8px;
-              border-radius: 8px;
-              font-weight: bold;
+            
+            <h2 style="color: #333;">
+              Email Verification
+            </h2>
+
+            <p style="
+              color: #555;
+              font-size: 16px;
             ">
-              ${otp}
-            </span>
+              Use the OTP below to verify your email address.
+            </p>
+
+            <div style="
+              margin: 25px 0;
+            ">
+              <span style="
+                display: inline-block;
+                background: black;
+                color: white;
+                padding: 15px 30px;
+                font-size: 28px;
+                letter-spacing: 8px;
+                border-radius: 8px;
+                font-weight: bold;
+              ">
+                ${otp}
+              </span>
+            </div>
+
+            <p style="
+              color: #777;
+              font-size: 14px;
+            ">
+              This OTP is valid for 10 minutes.
+            </p>
+
           </div>
-
-          <p style="
-            color: #777;
-            font-size: 14px;
-          ">
-            This OTP is valid for 10 minutes.
-          </p>
-
         </div>
-      </div>
-    `,
-  };
+      `,
+    });
 
-  const info = await transporter.sendMail(mailOptions);
-  console.log("OTP email sent:", info.response);
+    console.log("OTP email sent:", response);
+  } catch (error) {
+    console.log("OTP Email Error:", error);
+  }
 };
