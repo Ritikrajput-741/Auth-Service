@@ -1,22 +1,14 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const verifyEmail = async (token, email) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp-relay.brevo.com",
-      port: 465,
-      secure: true,
+    const verificationLink =
+      `https://auth-service-rose.vercel.app/verify/${token}`;
 
-      auth: {
-        user: process.env.BREVO_EMAIL,
-        pass: process.env.BREVO_SMTP_KEY,
-      },
-    });
-
-    const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
-
-    const mailOptions = {
-      from: process.env.BREVO_EMAIL,
+    const response = await resend.emails.send({
+      from: "Auth Service <onboarding@resend.dev>",
       to: email,
       subject: "Verify Your Email",
 
@@ -31,11 +23,10 @@ export const verifyEmail = async (token, email) => {
           </a>
         </div>
       `,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    console.log("Email Sent:", response);
 
-    console.log("Email Sent:", info.response);
   } catch (error) {
     console.log("Email Error:", error);
   }
