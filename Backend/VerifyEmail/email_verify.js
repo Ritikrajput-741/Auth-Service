@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 
 export const verifyEmail = async (token, email) => {
+  console.log("email from nodemauiler", email);
+  console.log("email from nodemauiler", token);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -12,6 +14,7 @@ export const verifyEmail = async (token, email) => {
   console.log(process.env.USER_EMAIL);
   console.log(process.env.USER_PASS);
   const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
+  // const verificationLink = `http://localhost:5173/verify/${token}`;
   console.log("verificationLink,", verificationLink);
 
   const mailOptions = {
