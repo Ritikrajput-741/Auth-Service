@@ -1,40 +1,53 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from "nodemailer";
 
 export const verifyEmail = async (token, email) => {
-  try {
-    const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.USER_EMAIL,
+      pass: process.env.USER_PASS,
+    },
+  });
 
-    const response = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: email,
-      subject: "Verify Your Email",
+  console.log(process.env.USER_EMAIL);
+  console.log(process.env.USER_PASS);
+  const verificationLink = `https://auth-service-rose.vercel.app/verify/${token}`;
+  // const verificationLink = `http://localhost:5173/verify/${token}`;
 
-      html: `
-        <div style="font-family: Arial; padding:20px;">
-          <h2>Email Verification</h2>
+  const mailOptions = {
+    from: process.env.USER_EMAIL,
+    to: email,
+    subject: "Verify Your Email",
 
-          <p>Click the button below to verify your email.</p>
+    html: `
+      <div style="font-family: Arial; padding:20px;">
+        <h2>Email Verification</h2>
 
-          <a href="${verificationLink}">
-            <button style="
-              background:black;
-              color:white;
-              padding:10px 20px;
-              border:none;
-              border-radius:5px;
-              cursor:pointer;
-            ">
-              Verify Email
-            </button>
-          </a>
-        </div>
-      `,
-    });
+        <p>Click the button below to verify your email.</p>
 
-    console.log(response);
-  } catch (error) {
-    console.log("Email Error:", error);
-  }
+        <a href="${verificationLink}">
+          <button style="
+            background:black;
+            color:white;
+            padding:10px 20px;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+          ">
+            Verify Email
+          </button>
+        </a>
+      </div>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
+  });
 };
